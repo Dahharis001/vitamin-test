@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Чего вам не хватает? · Тест на дефицит витаминов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+  :root {
+    --bg1:#eef5f3; --bg2:#e3eef0;
+    --teal:#0d9488; --teal-d:#0f766e; --teal-l:#5eead4;
+    --ink:#1f2d3a; --muted:#64748b;
+    --card:#ffffff; --line:#e6eef0;
+    --high:#ef4444; --mid:#f59e0b; --low:#10b981;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    font-family:'Manrope',-apple-system,'Segoe UI',sans-serif;
+    background:linear-gradient(160deg,var(--bg1),var(--bg2));
+    color:var(--ink); min-height:100vh; line-height:1.6;
+    display:flex; justify-content:center; padding:24px 16px;
+  }
+  .app { width:100%; max-width:600px; }
+
+  /* header */
+  .hero { text-align:center; margin-bottom:22px; }
+  .hero-art { margin-bottom:12px; }
+  .hero-art svg { animation:float 3.2s ease-in-out infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-7px);} }
+  .badge {
+    display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600;
+    color:var(--teal-d); background:#d1f0ea; padding:6px 14px; border-radius:999px; margin-bottom:14px;
+  }
+  h1 { font-size:30px; font-weight:800; letter-spacing:-.5px; margin-bottom:6px; }
+  .sub { color:var(--muted); font-size:16px; }
+
+  /* progress */
+  .steps { display:flex; gap:8px; margin:22px 0; }
+  .steps .dot { flex:1; height:6px; border-radius:999px; background:#d7e3e3; transition:.3s; }
+  .steps .dot.on { background:var(--teal); }
+
+  .card {
+    background:var(--card); border:1px solid var(--line); border-radius:20px;
+    padding:26px; box-shadow:0 10px 30px -12px rgba(13,148,136,.18);
+    animation:rise .4s ease;
+  }
+  @keyframes rise { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;} }
+
+  .step-title { font-size:20px; font-weight:700; margin-bottom:4px; }
+  .step-hint { color:var(--muted); font-size:14px; margin-bottom:18px; }
+
+  .chip {
+    display:inline-flex; align-items:center; padding:11px 16px; margin:5px 5px 5px 0;
+    background:#f1f7f6; border:1.5px solid #e1ecea; border-radius:14px;
+    cursor:pointer; user-select:none; transition:.18s; font-size:15px; font-weight:500;
+  }
+  .chip:hover { border-color:var(--teal-l); transform:translateY(-1px); }
+  .chip.active { background:var(--teal); border-color:var(--teal); color:#fff; box-shadow:0 6px 16px -6px var(--teal); }
+
+  .q { padding:16px 0; border-bottom:1px solid var(--line); }
+  .q:last-of-type { border-bottom:none; }
+  .q-text { font-weight:600; margin-bottom:12px; font-size:15.5px; }
+  .yn { display:flex; gap:10px; }
+  .yn button {
+    flex:1; padding:11px; border-radius:12px; border:1.5px solid #e1ecea;
+    background:#f8fbfb; color:var(--ink); cursor:pointer; font-size:15px;
+    font-weight:600; font-family:inherit; transition:.15s;
+  }
+  .yn button:hover { border-color:var(--teal-l); }
+  .yn button.yes.sel { background:#d1fae5; border-color:var(--low); color:#065f46; }
+  .yn button.no.sel  { background:#eef2f5; border-color:#cbd5e1; color:#475569; }
+
+  .btn {
+    width:100%; padding:15px; border:none; border-radius:14px;
+    background:var(--teal); color:#fff; font-size:16px; font-weight:700; font-family:inherit;
+    cursor:pointer; margin-top:18px; transition:.2s; box-shadow:0 8px 20px -8px var(--teal);
+  }
+  .btn:hover:not(:disabled) { background:var(--teal-d); transform:translateY(-1px); }
+  .btn:disabled { background:#cbd5d3; cursor:not-allowed; box-shadow:none; }
+
+  /* results */
+  .result-bar { margin:16px 0; }
+  .result-bar .label { display:flex; justify-content:space-between; margin-bottom:6px; align-items:baseline; }
+  .result-bar .label b { font-size:16px; }
+  .result-bar .lvl { font-size:13px; font-weight:600; }
+  .bar-bg { background:#eef2f4; border-radius:999px; height:14px; overflow:hidden; }
+  .bar-fill { height:100%; border-radius:999px; width:0; transition:width .8s cubic-bezier(.2,.8,.2,1); }
+  .high{background:linear-gradient(90deg,#f87171,#ef4444);} .high+.lvl,.lvl.high{color:var(--high);}
+  .mid {background:linear-gradient(90deg,#fbbf24,#f59e0b);}
+  .low {background:linear-gradient(90deg,#34d399,#10b981);}
+
+  .summary {
+    background:linear-gradient(135deg,#fef2f2,#fff7ed); border:1px solid #fcd9d9;
+    border-radius:14px; padding:14px 16px; margin-bottom:18px; font-size:15px; color:#7f1d1d;
+  }
+  .summary b { color:#b91c1c; }
+  .res-name { display:flex; align-items:center; gap:8px; }
+  .res-name b { font-size:16px; }
+  .res-ic {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:28px; height:28px; border-radius:8px; background:#f1f7f6; font-size:15px;
+  }
+  .rec {
+    display:flex; gap:12px; align-items:flex-start;
+    background:linear-gradient(135deg,#ecfdf5,#f0fdfa); border:1px solid #c7efe6;
+    border-radius:14px; padding:16px; margin-top:18px; font-size:14.5px;
+  }
+  .rec b { color:var(--teal-d); }
+  .rec-ic {
+    flex:none; display:inline-flex; align-items:center; justify-content:center;
+    width:38px; height:38px; border-radius:10px; background:#d1f0ea; font-size:20px;
+  }
+  .consult {
+    display:flex; gap:10px; align-items:center; text-decoration:none; color:var(--ink);
+    background:#f0f7ff; border:1px solid #d6e7fb; border-radius:14px;
+    padding:13px 15px; margin-top:12px; font-size:13.5px; line-height:1.45; transition:.15s;
+  }
+  .consult:hover { border-color:#7db3f5; background:#e8f2ff; }
+  .consult b { color:#1d6fd0; }
+  .consult-ic { font-size:20px; flex:none; }
+
+  .disclaimer {
+    display:flex; gap:10px; background:#fff8ed; border:1px solid #fde7c2;
+    border-radius:14px; padding:14px 16px; font-size:13px; color:#92580f; margin-top:18px;
+  }
+  .hidden { display:none; }
+  .author { text-align:center; color:var(--muted); font-size:13px; margin-top:24px; font-weight:500; }
+  .b2b {
+    display:block; text-align:center; text-decoration:none;
+    background:#f8fafc; border:1px dashed #cbd5e1; border-radius:14px;
+    padding:14px 16px; margin-top:12px; font-size:13.5px; color:#475569; transition:.15s; line-height:1.45;
+  }
+  .b2b:hover { border-color:var(--teal); color:var(--teal-d); background:#f0faf8; }
+  .b2b b { color:var(--teal-d); }
+  .footer { text-align:center; color:#94a3b8; font-size:12px; margin-top:16px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="hero">
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 220 150" width="180" height="123" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="112" cy="134" rx="62" ry="9" fill="#0d9488" opacity=".13"/>
+        <!-- витамины над ладонью -->
+        <g>
+          <circle cx="112" cy="26" r="12" fill="#ef4444"/>
+          <rect x="100" y="24.5" width="24" height="3" rx="1.5" fill="#fff" opacity=".75"/>
+          <g transform="rotate(-18 84 56)">
+            <rect x="64" y="47" width="40" height="18" rx="9" fill="#f59e0b"/>
+            <rect x="64" y="47" width="20" height="18" rx="9" fill="#fbbf24"/>
+          </g>
+          <g transform="rotate(14 140 52)">
+            <rect x="120" y="44" width="40" height="18" rx="9" fill="#0d9488"/>
+            <rect x="120" y="44" width="20" height="18" rx="9" fill="#5eead4"/>
+          </g>
+        </g>
+        <!-- открытая ладонь -->
+        <g fill="#f2c6a0">
+          <rect x="68" y="80" width="15" height="34" rx="7.5"/>
+          <rect x="88" y="75" width="15" height="39" rx="7.5"/>
+          <rect x="108" y="75" width="15" height="39" rx="7.5"/>
+          <rect x="128" y="80" width="15" height="34" rx="7.5"/>
+          <rect x="50" y="98" width="14" height="28" rx="7" transform="rotate(-38 57 112)"/>
+          <rect x="62" y="102" width="88" height="40" rx="20"/>
+        </g>
+        <path d="M70 116 q42 14 80 0" stroke="#e0ab82" stroke-width="2.5" fill="none" opacity=".6" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="badge">Проверь себя на витамины</span>
+    <h1>Чего вам не хватает?</h1>
+    <p class="sub">Определите возможный дефицит витаминов и минералов за минуту</p>
+  </div>
+
+  <div class="steps">
+    <div class="dot on" id="d1"></div>
+    <div class="dot" id="d2"></div>
+    <div class="dot" id="d3"></div>
+  </div>
+
+  <!-- ШАГ 1 -->
+  <div class="card" id="step1">
+    <div class="step-title">Что вас беспокоит?</div>
+    <div class="step-hint">Выберите от 1 до 3 проблем, которые ощущаете</div>
+    <div id="problems"></div>
+    <button class="btn" id="toQuestions" disabled>Продолжить →</button>
+  </div>
+
+  <!-- ШАГ 2 -->
+  <div class="card hidden" id="step2">
+    <div class="step-title">Несколько уточнений</div>
+    <div class="step-hint">Ответьте честно «да» или «нет»</div>
+    <div id="questions"></div>
+    <button class="btn" id="showResult" disabled>Показать результат →</button>
+  </div>
+
+  <!-- ШАГ 3 -->
+  <div class="card hidden" id="step3">
+    <div class="step-title">Ваш результат</div>
+    <div class="step-hint">Вероятность дефицита по вашим ответам</div>
+    <div id="results"></div>
+    <div class="disclaimer">
+      <span>⚠️</span>
+      <span>Это вероятностная оценка, а не диагноз. Подтвердите анализом крови
+      и проконсультируйтесь с врачом перед приёмом добавок.</span>
+    </div>
+    <button class="btn" onclick="location.reload()">Пройти заново</button>
+  </div>
+
+  <div class="author">Автор — провизор с опытом работы в фармкомпаниях и фарм-маркетинге</div>
+  <a class="b2b" href="https://t.me/arsbay" target="_blank">
+    🤝 <b>Брендам и аптекам:</b> хотите такой же тест под ваш бренд и дизайн? Напишите → <b>@arsbay</b>
+  </a>
+  <div class="footer">Информация носит ознакомительный характер и не заменяет консультацию врача</div>
+</div>
+
+<script>
+/* ====================================================================
+   ДАННЫЕ — правит фармацевт. Движок ниже трогать не нужно.
+   Формат:  "Проблема": [ {q:"вопрос", points:{нутриент: баллы}}, ... ]
+   ==================================================================== */
+const DATA = {
+  "😴 Проблемы со сном": [
+    { q: "Просыпаетесь ночью от судорог или подёргивания мышц?", points: { "Магний": 2 } },
+    { q: "Тревожность, трудно расслабиться вечером?",            points: { "Магний": 1, "Витамин B6": 1 } },
+    { q: "Мало бываете на солнце и чувствуете усталость днём?",  points: { "Витамин D": 2 } },
+    { q: "Часто простужаетесь или упадок настроения зимой?",     points: { "Витамин D": 1 } },
+  ],
+  "😤 Раздражительность / тревога": [
+    { q: "Подёргивания мышц или века?",                         points: { "Магний": 2 } },
+    { q: "Плохой, прерывистый сон?",                            points: { "Магний": 1 } },
+    { q: "Перепады настроения, плаксивость?",                   points: { "Витамин B6": 2 } },
+    { q: "Упадок настроения зимой, мало солнца?",               points: { "Витамин D": 1 } },
+  ],
+  "🧠 Память и концентрация": [
+    { q: "Покалывание или онемение в руках/ногах?",             points: { "Витамин B12": 2 } },
+    { q: "Едите мало мяса и молочного (вегетарианство)?",       points: { "Витамин B12": 1 } },
+    { q: "Туман в голове вместе с усталостью и бледностью?",    points: { "Железо": 2 } },
+    { q: "Сухость кожи, мало рыбы в рационе?",                  points: { "Омега-3": 1 } },
+  ],
+  "🔋 Постоянная усталость": [
+    { q: "Бледность кожи, одышка при лёгкой нагрузке?",         points: { "Железо": 2 } },
+    { q: "Мало солнца, боли в костях/мышцах?",                  points: { "Витамин D": 2 } },
+    { q: "Онемение конечностей и проблемы с памятью?",          points: { "Витамин B12": 1 } },
+    { q: "Зябкость, набор веса, сухость кожи?",                 points: { "Йод": 2 } },
+  ],
+  "💪 Судороги / спазмы мышц": [
+    { q: "Подёргивание века, тревожность?",                     points: { "Магний": 2 } },
+    { q: "Слабость мышц вместе с сердцебиением?",               points: { "Калий": 2 } },
+    { q: "Онемение вокруг рта, ломкие ногти?",                  points: { "Кальций": 2 } },
+    { q: "Прерывистый сон, запоры?",                            points: { "Магний": 1 } },
+  ],
+  "🍽️ Пищеварение": [
+    { q: "Запоры вместе с мышечными спазмами?",                 points: { "Магний": 2 } },
+    { q: "Снизился аппетит, изменился вкус или запах?",         points: { "Цинк": 2 } },
+    { q: "Ранки заживают долго, частые инфекции?",              points: { "Цинк": 1 } },
+    { q: "Тошнота, усталость, онемение?",                       points: { "Витамин B12": 1 } },
+  ],
+  "💇 Волосы и ногти": [
+    { q: "Сильное выпадение волос, бледность?",                 points: { "Железо": 2 } },
+    { q: "Ломкие ногти, белые пятна на них?",                   points: { "Цинк": 2 } },
+    { q: "Истончение волос, сухая кожа головы?",                points: { "Биотин (B7)": 2 } },
+    { q: "Зябкость, набор веса?",                               points: { "Йод": 1 } },
+  ],
+  "🩹 Кожа (сухость, проблемы)": [
+    { q: "Очень сухая, шершавая кожа?",                         points: { "Витамин A": 2, "Омега-3": 1 } },
+    { q: "Долго заживают ранки?",                               points: { "Цинк": 2 } },
+    { q: "Легко появляются синяки?",                            points: { "Витамин C": 1 } },
+    { q: "Шелушение, мало жирной рыбы в рационе?",              points: { "Омега-3": 2 } },
+  ],
+  "🤧 Иммунитет / частые простуды": [
+    { q: "Болеете чаще 4–5 раз в год?",                         points: { "Витамин D": 2, "Цинк": 1 } },
+    { q: "Кровоточат дёсны, легко синяки?",                     points: { "Витамин C": 2 } },
+    { q: "Долго заживают ранки?",                               points: { "Цинк": 2 } },
+    { q: "Мало солнца, усталость?",                             points: { "Витамин D": 1 } },
+  ],
+  "🦴 Кости и суставы": [
+    { q: "Боли в костях, мышечная слабость?",                   points: { "Витамин D": 2 } },
+    { q: "Судороги, онемение вокруг рта?",                      points: { "Кальций": 2 } },
+    { q: "Легко появляются синяки/кровоточивость?",             points: { "Витамин K": 2 } },
+    { q: "Мало солнца и молочного?",                            points: { "Витамин D": 1, "Кальций": 1 } },
+  ],
+  "😔 Настроение / подавленность": [
+    { q: "Упадок настроения зимой, мало солнца?",               points: { "Витамин D": 2 } },
+    { q: "Усталость, онемение, мало мяса?",                     points: { "Витамин B12": 2 } },
+    { q: "Раздражительность, язвочки во рту?",                  points: { "Фолиевая (B9)": 2 } },
+    { q: "Сухость кожи, мало рыбы?",                            points: { "Омега-3": 1 } },
+  ],
+  "👁️ Зрение (сухость, ночное)": [
+    { q: "Плохо видите в сумерках/темноте?",                    points: { "Витамин A": 2 } },
+    { q: "Сухость, ощущение песка в глазах?",                   points: { "Витамин A": 1, "Омега-3": 2 } },
+    { q: "Сухая шершавая кожа?",                                points: { "Витамин A": 1 } },
+  ],
+  "👄 Трещины в углах рта / язвы": [
+    { q: "Трещины и заеды в углах рта?",                        points: { "Витамин B2": 2 } },
+    { q: "Воспалённый красный язык?",                           points: { "Витамин B12": 2, "Железо": 1 } },
+    { q: "Язвочки во рту, раздражительность?",                  points: { "Фолиевая (B9)": 2 } },
+  ],
+  "❤️ Сердцебиение / перебои": [
+    { q: "Сердцебиение вместе с мышечной слабостью?",           points: { "Калий": 2 } },
+    { q: "Подёргивания мышц, тревога?",                         points: { "Магний": 2 } },
+    { q: "Бледность, усталость, одышка?",                       points: { "Железо": 1 } },
+  ],
+};
+
+const REC = {
+  "Магний":        "Работа мышц и нервов. Источники: орехи, тёмная зелень, бобовые. Анализ: магний в эритроцитах.",
+  "Витамин D":     "Кости, иммунитет, настроение. Источники: солнце, жирная рыба. Анализ: 25-OH витамин D.",
+  "Витамин B12":   "Нервы и кроветворение. Источники: мясо, рыба, яйца. Веганам особенно важно. Анализ: B12.",
+  "Витамин B6":    "Нервная система, настроение. Источники: мясо, рыба, бананы, картофель.",
+  "Витамин B2":    "Кожа, слизистые, энергия. Источники: молочное, яйца, печень, миндаль.",
+  "Фолиевая (B9)": "Кроветворение, нервная система. Источники: зелень, бобовые, цитрусовые. Важно при беременности.",
+  "Биотин (B7)":   "Волосы, ногти, кожа. Источники: яйца, орехи, печень.",
+  "Витамин C":     "Иммунитет, сосуды, заживление. Источники: цитрусовые, перец, шиповник.",
+  "Витамин A":     "Зрение, кожа, иммунитет. Источники: печень, морковь, яйца. Осторожно с передозировкой.",
+  "Витамин K":     "Свёртывание крови, кости. Источники: зелень, капуста, брокколи.",
+  "Железо":        "Перенос кислорода. Источники: красное мясо, печень, бобовые. Анализ: ферритин + ОАК.",
+  "Цинк":          "Иммунитет, кожа, заживление. Источники: мясо, морепродукты, семечки.",
+  "Калий":         "Мышцы и сердце. Источники: бананы, картофель, бобовые.",
+  "Кальций":       "Кости и мышцы. Источники: молочное, зелень, кунжут.",
+  "Йод":           "Щитовидная железа, обмен веществ. Источники: морепродукты, йодированная соль. Анализ: ТТГ.",
+  "Омега-3":       "Кожа, мозг, сердце, суставы. Источники: жирная рыба, льняное масло, грецкие орехи.",
+};
+
+const ICON = {
+  "Магний":"⚡","Витамин D":"☀️","Витамин B12":"🧬","Витамин B6":"🌿","Витамин B2":"🥛",
+  "Фолиевая (B9)":"🍃","Биотин (B7)":"💅","Витамин C":"🍊","Витамин A":"🥕","Витамин K":"🥦",
+  "Железо":"🩸","Цинк":"🛡️","Калий":"🍌","Кальций":"🦴","Йод":"🧂","Омега-3":"🐟",
+};
+
+/* ==================== ДВИЖОК (не трогать) ==================== */
+let selectedProblems = [], answers = {};
+const dot = id => document.getElementById(id);
+
+const problemsEl = document.getElementById('problems');
+Object.keys(DATA).forEach(p => {
+  const chip = document.createElement('span');
+  chip.className = 'chip'; chip.textContent = p;
+  chip.onclick = () => {
+    if (selectedProblems.includes(p)) {
+      selectedProblems = selectedProblems.filter(x => x !== p);
+      chip.classList.remove('active');
+    } else if (selectedProblems.length < 3) {
+      selectedProblems.push(p); chip.classList.add('active');
+    }
+    document.getElementById('toQuestions').disabled = selectedProblems.length === 0;
+  };
+  problemsEl.appendChild(chip);
+});
+
+document.getElementById('toQuestions').onclick = () => {
+  const qEl = document.getElementById('questions');
+  qEl.innerHTML = ''; answers = {};
+  let idx = 0;
+  selectedProblems.forEach(p => {
+    DATA[p].forEach(item => {
+      const id = 'q' + idx++;
+      const div = document.createElement('div');
+      div.className = 'q';
+      div.innerHTML = `<div class="q-text">${item.q}</div>
+        <div class="yn">
+          <button class="yes" data-id="${id}">Да</button>
+          <button class="no"  data-id="${id}">Нет</button>
+        </div>`;
+      div._points = item.points; div._val = id;
+      qEl.appendChild(div);
+    });
+  });
+  qEl.querySelectorAll('button').forEach(b => {
+    b.onclick = () => {
+      const parent = b.closest('.q');
+      parent.querySelectorAll('button').forEach(x => x.classList.remove('sel'));
+      b.classList.add('sel');
+      answers[parent._val] = { val: b.classList.contains('yes') ? 1 : 0, points: parent._points };
+      const total = qEl.querySelectorAll('.q').length;
+      document.getElementById('showResult').disabled = Object.keys(answers).length < total;
+    };
+  });
+  document.getElementById('step1').classList.add('hidden');
+  document.getElementById('step2').classList.remove('hidden');
+  dot('d2').classList.add('on');
+};
+
+document.getElementById('showResult').onclick = () => {
+  const scores = {};
+  Object.values(answers).forEach(a => {
+    if (a.val === 1) for (const [n, p] of Object.entries(a.points)) scores[n] = (scores[n]||0)+p;
+  });
+  const ranked = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const resEl = document.getElementById('results');
+  if (!ranked.length) {
+    resEl.innerHTML = '<p>По вашим ответам явных признаков дефицита не выявлено. Если симптомы беспокоят — обратитесь к врачу.</p>';
+  } else {
+    const max = ranked[0][1];
+    const tops = ranked.filter(([,s]) => Math.min(100, Math.round(s/(max+1)*100)+25) >= 70).map(([n])=>n);
+    resEl.innerHTML = tops.length
+      ? `<div class="summary">Вероятнее всего не хватает: <b>${tops.join(', ')}</b></div>`
+      : '';
+    ranked.forEach(([n, score]) => {
+      const pct = Math.min(100, Math.round(score/(max+1)*100)+25);
+      const cls = pct>=70?'high':pct>=40?'mid':'low';
+      const lvl = pct>=70?'высокая':pct>=40?'средняя':'низкая';
+      resEl.innerHTML += `
+        <div class="result-bar">
+          <div class="label">
+            <span class="res-name"><span class="res-ic">${ICON[n]||'💊'}</span><b>${n}</b></span>
+            <span class="lvl ${cls}">${lvl} · ${pct}%</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill ${cls}" data-w="${pct}"></div></div>
+        </div>`;
+    });
+    const top = ranked[0][0];
+    resEl.innerHTML += `<div class="rec"><span class="rec-ic">${ICON[top]||'💊'}</span><div><b>Обратите внимание на ${top}.</b> ${REC[top]||''}</div></div>`;
+    resEl.innerHTML += `<a class="consult" href="https://t.me/arsbay" target="_blank">
+      <span class="consult-ic">💬</span>
+      <span><b>Бесплатная консультация:</b> где купить оригинальные БАДы известных брендов? Спросите провизора — автора теста · <b>@arsbay</b></span>
+    </a>`;
+    requestAnimationFrame(() => resEl.querySelectorAll('.bar-fill').forEach(b => b.style.width = b.dataset.w + '%'));
+  }
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('step3').classList.remove('hidden');
+  dot('d3').classList.add('on');
+};
+</script>
+</body>
+</html>
