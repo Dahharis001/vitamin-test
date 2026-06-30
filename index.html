@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <title>Чего вам не хватает? · Тест на дефицит витаминов</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <style>
@@ -330,6 +331,14 @@ const ICON = {
 };
 
 /* ==================== ДВИЖОК (не трогать) ==================== */
+// Интеграция с Telegram (работает и в обычном браузере)
+if (window.Telegram && window.Telegram.WebApp) {
+  const tg = window.Telegram.WebApp;
+  tg.ready();
+  tg.expand();                       // развернуть на весь экран
+  try { tg.setHeaderColor('#e3eef0'); } catch (e) {}
+}
+
 let selectedProblems = [], answers = {};
 const dot = id => document.getElementById(id);
 
