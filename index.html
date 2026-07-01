@@ -120,6 +120,11 @@
   .consult:hover { border-color:#7db3f5; background:#e8f2ff; }
   .consult b { color:#1d6fd0; }
   .consult-ic { font-size:20px; flex:none; }
+  .analyses-note {
+    text-align:center; font-size:13.5px; color:#475569; margin-top:12px; line-height:1.5;
+    background:#f1f7f6; border:1px dashed #cbd5d3; border-radius:12px; padding:12px 14px;
+  }
+  .analyses-note b { color:var(--teal-d); }
 
   .disclaimer {
     display:flex; gap:10px; background:#fff8ed; border:1px solid #fde7c2;
@@ -423,8 +428,9 @@ document.getElementById('showResult').onclick = () => {
     resEl.innerHTML += `<div class="rec"><span class="rec-ic">${ICON[top]||'💊'}</span><div><b>Обратите внимание на ${top}.</b> ${REC[top]||''}</div></div>`;
     resEl.innerHTML += `<a class="consult" href="https://t.me/arsbay" target="_blank">
       <span class="consult-ic">💬</span>
-      <span><b>Бесплатная консультация:</b> где купить оригинальные БАДы известных брендов? Спросите провизора — автора теста · <b>@arsbay</b></span>
+      <span><b>Бесплатная консультация провизора.</b> После теста можно заказать индивидуальный подбор витаминов под ваши анализы. Напишите → <b>@arsbay</b></span>
     </a>`;
+    resEl.innerHTML += `<div class="analyses-note">📸 <b>Заскриньте ваши анализы крови</b> и отправьте специалисту — подскажем дальнейшие шаги.</div>`;
     requestAnimationFrame(() => resEl.querySelectorAll('.bar-fill').forEach(b => b.style.width = b.dataset.w + '%'));
   }
   document.getElementById('step2').classList.add('hidden');
