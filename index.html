@@ -132,13 +132,20 @@
   }
   .hidden { display:none; }
   .author { text-align:center; color:var(--muted); font-size:13px; margin-top:24px; font-weight:500; }
-  .b2b {
-    display:block; text-align:center; text-decoration:none;
-    background:#f8fafc; border:1px dashed #cbd5e1; border-radius:14px;
-    padding:14px 16px; margin-top:12px; font-size:13.5px; color:#475569; transition:.15s; line-height:1.45;
+  .consult-cta {
+    display:flex; align-items:center; gap:13px; text-decoration:none;
+    background:linear-gradient(135deg,#0d9488,#0f766e); color:#fff;
+    border-radius:18px; padding:17px 19px; margin-top:14px;
+    box-shadow:0 12px 26px -10px rgba(13,148,136,.55); transition:.2s;
   }
-  .b2b:hover { border-color:var(--teal); color:var(--teal-d); background:#f0faf8; }
-  .b2b b { color:var(--teal-d); }
+  .consult-cta:hover { transform:translateY(-2px); box-shadow:0 16px 32px -10px rgba(13,148,136,.65); }
+  .cc-ic { font-size:28px; flex:none; }
+  .cc-text { font-size:15px; line-height:1.5; }
+  .cc-text b { color:#ffffff; }
+  .cc-handle {
+    display:inline-block; margin-top:6px; font-weight:800; font-size:14px;
+    background:rgba(255,255,255,.22); padding:4px 13px; border-radius:999px;
+  }
   .footer { text-align:center; color:#94a3b8; font-size:12px; margin-top:16px; }
 </style>
 </head>
@@ -215,8 +222,9 @@
   </div>
 
   <div class="author">Автор — провизор с опытом работы в фармкомпаниях и фарм-маркетинге</div>
-  <a class="b2b" href="https://t.me/arsbay" target="_blank">
-    🤝 <b>Брендам и аптекам:</b> хотите такой же тест под ваш бренд и дизайн? Напишите → <b>@arsbay</b>
+  <a class="consult-cta" href="https://t.me/arsbay" target="_blank">
+    <span class="cc-ic">💊</span>
+    <span class="cc-text">Получите <b>индивидуальный подбор витаминов</b> под ваши анализы и <b>бесплатную консультацию</b> провизора.<br><span class="cc-handle">Пишите → @arsbay</span></span>
   </a>
   <div class="footer">Информация носит ознакомительный характер и не заменяет консультацию врача</div>
 </div>
