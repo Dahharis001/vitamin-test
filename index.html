@@ -438,7 +438,7 @@ document.getElementById('showResult').onclick = () => {
       <span class="consult-ic">💬</span>
       <span><b>Бесплатная консультация провизора.</b> После теста можно заказать индивидуальный подбор витаминов под ваши анализы. Напишите → <b>@arsbay</b></span>
     </a>`;
-    resEl.innerHTML += `<div class="analyses-note">📸 <b>Заскриньте ваши анализы крови</b> и отправьте специалисту — подскажем дальнейшие шаги.</div>`;
+    resEl.innerHTML += `<div class="analyses-note">📸 <b>Заскриньте ваши анализы</b> и отправьте специалисту — <b>подберём бесплатно оригинальные витамины</b> и подскажем дальнейшие шаги.</div>`;
     requestAnimationFrame(() => resEl.querySelectorAll('.bar-fill').forEach(b => b.style.width = b.dataset.w + '%'));
   }
   document.getElementById('step2').classList.add('hidden');
